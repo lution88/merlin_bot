@@ -1,0 +1,30 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+discord = "*"
+discord-buttons-plugin ="*"
+requests = "*"
+django = "*"
+youtube_dl = "*"
+beautifulsoup4 = "*"
+selenium = "*"
+google-api-python-client = "*"
+google-auth-httplib2 = "*" 
+google-auth-oauthlib = "*"
+XlsxWriter = "*"
+openpyxl = "*"
+pynacl = "*"
+PyJWT = "*"
+lxml = "*"
+pymysql = "*"
+boto3 = "*"
+python-dateutil = "*"
+pytz = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.8"
