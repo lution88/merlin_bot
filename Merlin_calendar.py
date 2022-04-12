@@ -22,17 +22,14 @@ from google.oauth2.credentials import Credentials
 import datetime
 from discord.ext import commands
 import discord
-import json
-import pymysql
 from google_auth_oauthlib.flow import InstalledAppFlow
+from google.auth.transport.requests import Request
 import os
 
 # 구글 캘린더 권한 관련 코드
 SCOPES = ['https://www.googleapis.com/auth/calendar']
-#endregion
 
-db_host = os.getenv("HOST")
-db_key = os.getenv("DB_PW")
+#endregion
 
 """ 2) Google_calendar category class.   
 
@@ -55,6 +52,7 @@ class Google_calendar(commands.Cog):
         embed.add_field(name='Event create(Year/Month/Date)', value='!create YYYY-MM-DD(start date) YYYY-MM-DD(end date) EventTitle', inline=False)
         embed.add_field(name='Event create(Month/Date/Time)', value='!create MM-DD(start date) HH:MM:SS(start time) MM-DD(end date) HH:MM:SS(end time) EventTitle', inline=False)
         embed.add_field(name='Event create(Month/Date)', value='!create MM-DD(start date) MM-DD(end date) EventTitle', inline=False)
+        embed.add_field(name='Event create(Today)', value='!create today EventTitle', inline=False)
         embed.add_field(name='Event update', value='!update YYYY-MM-DD IndexNumber EventTitle to update', inline=False)
         embed.add_field(name='Event delete', value='!delete YYYY-MM-DD IndexNumber', inline=False)
         await ctx.send(embed=embed)
@@ -63,33 +61,20 @@ class Google_calendar(commands.Cog):
       @commands.command()
       async def create(self, ctx, *, msg):
           # 구글 API 인증 코드
-          # 서버안의 유저 id
-        #   user_id = ctx.author.discriminator
-          user_id = '7777'
-          # 데이터베이스 연결
-          db_connect = pymysql.connect(host=f'{db_host}', port=3306, user='admin', password=f'{db_key}', db='merlin', charset='utf8')
-          cur = db_connect.cursor()
-          # 쿼리문 작성(디스코드 유저 id로 유저 존재 여부 확인)
-          cur.execute(f"SELECT EXISTS (SELECT * from merlin where user_id={user_id} limit 1) as success")
-          user_result = cur.fetchall()
-          # 유저가 데이터베이스에 존재 할 경우 토큰을 불러와서 사용
-          if user_result[0][0] == 1:
-              db_connect = pymysql.connect(host=f'{db_host}', port=3306, user='admin', password=f'{db_key}', db='merlin', charset='utf8')
-              cur = db_connect.cursor()
-              cur.execute(f"SELECT token from merlin WHERE user_id={user_id}")
-              user_token = cur.fetchall()
-              user_token = json.loads(user_token[0][0])
-              creds = Credentials.from_authorized_user_info(user_token, SCOPES)
-          # 유저가 존재하지 않을 경우 데이터베이스에 토큰 생성
-          else:
-              flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
-            #   creds = flow.run_local_server(port=0)
-              creds = flow.run_local_server(port=0)
-              token_json = json.dumps(creds.to_json())
-              db_connect = pymysql.connect(host=f'{db_host}', port=3306, user='admin', password=f'{db_key}', db='merlin', charset='utf8')
-              cur = db_connect.cursor()
-              cur.execute(f"INSERT INTO merlin (user_id, token) VALUES ({user_id}, {token_json})")
-              db_connect.commit()
+          creds = None
+          if os.path.exists('token.json'):
+              creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+          # If there are no (valid) credentials available, let the user log in.
+          if not creds or not creds.valid:
+              if creds and creds.expired and creds.refresh_token:
+                  creds.refresh(Request())
+              else:
+                  flow = InstalledAppFlow.from_client_secrets_file(
+                      'credentials.json', SCOPES)
+                  creds = flow.run_local_server(port=0)
+              # Save the credentials for the next run
+              with open('token.json', 'w') as token:
+                  token.write(creds.to_json())
           service = build('calendar', 'v3', credentials=creds)
           # 메세지 입력받음
           input_data = (msg.split(' '))
@@ -98,7 +83,9 @@ class Google_calendar(commands.Cog):
               title_list = input_data[1:]
               title = " ".join(title_list)
               # 시작/종료 날짜를 현재 시간의 날짜로 입력
+              start_datetime = (datetime.date.today()) + datetime.timedelta(hours=9)
               start_datetime = datetime.date.today().strftime("%Y-%m-%d")
+              end_datetime = (datetime.date.today()) + datetime.timedelta(hours=9)
               end_datetime = datetime.date.today().strftime("%Y-%m-%d")
               # 캘린더 이벤트 내용 입력
               event = {
@@ -129,93 +116,102 @@ class Google_calendar(commands.Cog):
                       # },
                   }
           # 년을 입력하지 않을 경우
-          if len(input_data[0]) < 6:
-              # 시간 데이터를 입력하지 않을 경우
-              if ":" not in input_data[1]:
-                  title_list = input_data[2:]
-                  title = " ".join(title_list)
-                  date_data = input_data[:2]
-                  start_date_split = date_data[0].split('-')
-                  end_date_split = date_data[1].split('-')
-                  start_datetime = datetime.datetime(datetime.date.today().year, int(start_date_split[0]), int(start_date_split[1])).strftime("%Y-%m-%d")
-                  end_datetime = datetime.datetime(datetime.date.today().year, int(end_date_split[0]), int(end_date_split[1])).strftime("%Y-%m-%d")
-                  event = {
-                      'summary': title, # 일정 제목
-                      'start': { # 시작 날짜
-                          'date': start_datetime,
-                          'timeZone': 'Asia/Seoul',
-                      },
-                      'end': { # 종료 날짜
-                          'date': end_datetime,
-                          'timeZone': 'Asia/Seoul',
-                      },
-                  }
-              # 시간 데이터를 입력 할 경우
+          if input_data[0] != 'today':
+              if len(input_data[0]) < 6:
+                  # 시간 데이터를 입력하지 않을 경우
+                  if ":" not in input_data[1]:
+                      title_list = input_data[2:]
+                      title = " ".join(title_list)
+                      date_data = input_data[:2]
+                      start_date_split = date_data[0].split('-')
+                      end_date_split = date_data[1].split('-')
+                      start_datetime = (datetime.datetime(datetime.date.today().year, int(start_date_split[0]), int(start_date_split[1]))) + datetime.timedelta(hours=9)
+                      start_datetime = datetime.datetime(datetime.date.today().year, int(start_date_split[0]), int(start_date_split[1])).strftime("%Y-%m-%d")
+                      end_datetime = (datetime.datetime(datetime.date.today().year, int(end_date_split[0]))) + datetime.timedelta(hours=9)
+                      end_datetime = datetime.datetime(datetime.date.today().year, int(end_date_split[0]), int(end_date_split[1])).strftime("%Y-%m-%d")
+                      event = {
+                          'summary': title, # 일정 제목
+                          'start': { # 시작 날짜
+                              'date': start_datetime,
+                              'timeZone': 'Asia/Seoul',
+                          },
+                          'end': { # 종료 날짜
+                              'date': end_datetime,
+                              'timeZone': 'Asia/Seoul',
+                          },
+                      }
+                  # 시간 데이터를 입력 할 경우
+                  else:
+                      title_list = input_data[4:]
+                      title = " ".join(title_list)
+                      date_data = input_data[:4]
+                      start_date_split = date_data[0].split("-")
+                      start_time_split = date_data[1].split(":")
+                      end_date_split = date_data[2].split("-")
+                      end_time_split = date_data[3].split(":")
+                      start_datetime = (datetime.datetime(datetime.date.today().year, int(start_date_split[0]), int(start_date_split[1]), int(start_time_split[0]), int(start_time_split[1]), 0)) + datetime.timedelta(hours=9)
+                      start_datetime = datetime.datetime(datetime.date.today().year, int(start_date_split[0]), int(start_date_split[1]), int(start_time_split[0]), int(start_time_split[1]), 0).strftime("%Y-%m-%dT%H:%M:%S")
+                      end_datetime = (datetime.datetime(datetime.date.today().year, int(end_date_split[0]), int(end_date_split[1]), int(end_time_split[0]), int(end_time_split[1]), 0)) + datetime.timedelta(hours=9)
+                      end_datetime = datetime.datetime(datetime.date.today().year, int(end_date_split[0]), int(end_date_split[1]), int(end_time_split[0]), int(end_time_split[1]), 0).strftime("%Y-%m-%dT%H:%M:%S")
+                      event = {
+                          'summary': title, # 일정 제목
+                          'start': { # 시작 날짜
+                              'dateTime': start_datetime,
+                              'timeZone': 'Asia/Seoul',
+                          },
+                          'end': { # 종료 날짜
+                              'dateTime': end_datetime,
+                              'timeZone': 'Asia/Seoul',
+                          },
+                      }
+              # 년을 입력 할 경우
               else:
-                  title_list = input_data[4:]
-                  title = " ".join(title_list)
-                  date_data = input_data[:4]
-                  start_date_split = date_data[0].split("-")
-                  start_time_split = date_data[1].split(":")
-                  end_date_split = date_data[2].split("-")
-                  end_time_split = date_data[3].split(":")
-                  start_datetime = datetime.datetime(datetime.date.today().year, int(start_date_split[0]), int(start_date_split[1]), int(start_time_split[0]), int(start_time_split[1]), 0).strftime("%Y-%m-%dT%H:%M:%S")
-                  end_datetime = datetime.datetime(datetime.date.today().year, int(end_date_split[0]), int(end_date_split[1]), int(end_time_split[0]), int(end_time_split[1]), 0).strftime("%Y-%m-%dT%H:%M:%S")
-                  event = {
-                      'summary': title, # 일정 제목
-                      'start': { # 시작 날짜
-                          'dateTime': start_datetime,
-                          'timeZone': 'Asia/Seoul',
-                      },
-                      'end': { # 종료 날짜
-                          'dateTime': end_datetime,
-                          'timeZone': 'Asia/Seoul',
-                      },
-                  }
-          # 년을 입력 할 경우
-          else:
-              # 시간 데이터를 입력하지 않을 경우
-              if ":" not in input_data[1]:
-                  title_list = input_data[2:]
-                  title = " ".join(title_list)
-                  date_data = input_data[:2]
-                  start_date_split = date_data[0].split('-')
-                  end_date_split = date_data[1].split('-')
-                  start_datetime = datetime.datetime(int(start_date_split[0]), int(start_date_split[1]), int(start_date_split[2])).strftime("%Y-%m-%d")
-                  end_datetime = datetime.datetime(int(end_date_split[0]), int(end_date_split[1]), int(end_date_split[2])).strftime("%Y-%m-%d")
-                  event = {
-                      'summary': title, # 일정 제목
-                      'start': { # 시작 날짜
-                          'date': start_datetime,
-                          'timeZone': 'Asia/Seoul',
-                      },
-                      'end': { # 종료 날짜
-                          'date': end_datetime,
-                          'timeZone': 'Asia/Seoul',
-                      },
-                  }
-              # 시간 데이터를 입력 할 경우
-              else:
-                  title_list = input_data[4:]
-                  title = " ".join(title_list)
-                  date_data = input_data[:4]
-                  start_date_split = date_data[0].split("-")
-                  start_time_split = date_data[1].split(":")
-                  end_date_split = date_data[2].split("-")
-                  end_time_split = date_data[3].split(":")
-                  start_datetime = datetime.datetime(int(start_date_split[0]), int(start_date_split[1]), int(start_date_split[2]), int(start_time_split[0]), int(start_time_split[1]), 0).strftime("%Y-%m-%dT%H:%M:%S")
-                  end_datetime = datetime.datetime(int(end_date_split[0]), int(end_date_split[1]), int(end_date_split[2]), int(end_time_split[0]), int(end_time_split[1]), 0).strftime("%Y-%m-%dT%H:%M:%S")
-                  event = {
-                      'summary': title, # 일정 제목
-                      'start': { # 시작 날짜
-                          'dateTime': start_datetime,
-                          'timeZone': 'Asia/Seoul',
-                      },
-                      'end': { # 종료 날짜
-                          'dateTime': end_datetime,
-                          'timeZone': 'Asia/Seoul',
-                      },
-                  }
+                  # 시간 데이터를 입력하지 않을 경우
+                  if ":" not in input_data[1]:
+                      title_list = input_data[2:]
+                      title = " ".join(title_list)
+                      date_data = input_data[:2]
+                      start_date_split = date_data[0].split('-')
+                      end_date_split = date_data[1].split('-')
+                      start_datetime = (datetime.datetime(int(start_date_split[0]), int(start_date_split[1]), int(start_date_split[2]))) + datetime.timedelta(hours=9)
+                      start_datetime = datetime.datetime(int(start_date_split[0]), int(start_date_split[1]), int(start_date_split[2])).strftime("%Y-%m-%d")
+                      end_datetime = (datetime.datetime(int(end_date_split[0]), int(end_date_split[1]), int(end_date_split[2]))) + datetime.timedelta(hours=9)
+                      end_datetime = datetime.datetime(int(end_date_split[0]), int(end_date_split[1]), int(end_date_split[2])).strftime("%Y-%m-%d")
+                      event = {
+                          'summary': title, # 일정 제목
+                          'start': { # 시작 날짜
+                              'date': start_datetime,
+                              'timeZone': 'Asia/Seoul',
+                          },
+                          'end': { # 종료 날짜
+                              'date': end_datetime,
+                              'timeZone': 'Asia/Seoul',
+                          },
+                      }
+                  # 시간 데이터를 입력 할 경우
+                  else:
+                      title_list = input_data[4:]
+                      title = " ".join(title_list)
+                      date_data = input_data[:4]
+                      start_date_split = date_data[0].split("-")
+                      start_time_split = date_data[1].split(":")
+                      end_date_split = date_data[2].split("-")
+                      end_time_split = date_data[3].split(":")
+                      start_datetime = (datetime.datetime(int(start_date_split[0]), int(start_date_split[1]), int(start_date_split[2]), int(start_time_split[0]), int(start_time_split[1]), 0)) + datetime.timedelta(hours=9)
+                      start_datetime = datetime.datetime(int(start_date_split[0]), int(start_date_split[1]), int(start_date_split[2]), int(start_time_split[0]), int(start_time_split[1]), 0).strftime("%Y-%m-%dT%H:%M:%S")
+                      end_datetime = (datetime.datetime(int(end_date_split[0]), int(end_date_split[1]), int(end_date_split[2]), int(end_time_split[0]), int(end_time_split[1]), 0)) + datetime.timedelta(hours=9)
+                      end_datetime = datetime.datetime(int(end_date_split[0]), int(end_date_split[1]), int(end_date_split[2]), int(end_time_split[0]), int(end_time_split[1]), 0).strftime("%Y-%m-%dT%H:%M:%S")
+                      event = {
+                          'summary': title, # 일정 제목
+                          'start': { # 시작 날짜
+                              'dateTime': start_datetime,
+                              'timeZone': 'Asia/Seoul',
+                          },
+                          'end': { # 종료 날짜
+                              'dateTime': end_datetime,
+                              'timeZone': 'Asia/Seoul',
+                          },
+                      }
           # 구글 캘린더에 추가
           event = service.events().insert(calendarId='primary', body=event).execute()
           # 임베드에 표시할 이벤트 타이틀
@@ -232,32 +228,20 @@ class Google_calendar(commands.Cog):
       @commands.command()
       async def list(self, ctx, *, msg):
           # 구글 API 인증 코드
-          # 서버안의 유저 id
-        #   user_id = ctx.author.discriminator
-          user_id = '7777'
-          # 데이터베이스 연결
-          db_connect = pymysql.connect(host=f'{db_host}', port=3306, user='admin', password=f'{db_key}', db='merlin', charset='utf8')
-          cur = db_connect.cursor()
-          # 쿼리문 작성(디스코드 유저 id로 유저 존재 여부 확인)
-          cur.execute(f"SELECT EXISTS (SELECT * from merlin where user_id={user_id} limit 1) as success")
-          user_result = cur.fetchall()
-          # 유저가 데이터베이스에 존재 할 경우 토큰을 불러와서 사용
-          if user_result[0][0] == 1:
-              db_connect = pymysql.connect(host=f'{db_host}', port=3306, user='admin', password=f'{db_key}', db='merlin', charset='utf8')
-              cur = db_connect.cursor()
-              cur.execute(f"SELECT token from merlin WHERE user_id={user_id}")
-              user_token = cur.fetchall()
-              user_token = json.loads(user_token[0][0])
-              creds = Credentials.from_authorized_user_info(user_token, SCOPES)
-          # 유저가 존재하지 않을 경우 데이터베이스에 토큰 생성
-          else:
-              flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
-              creds = flow.run_local_server(port=0)
-              token_json = json.dumps(creds.to_json())
-              db_connect = pymysql.connect(host=f'{db_host}', port=3306, user='admin', password=f'{db_key}', db='merlin', charset='utf8')
-              cur = db_connect.cursor()
-              cur.execute(f"INSERT INTO merlin (user_id, token) VALUES ({user_id}, {token_json})")
-              db_connect.commit()
+          creds = None
+          if os.path.exists('token.json'):
+              creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+          # If there are no (valid) credentials available, let the user log in.
+          if not creds or not creds.valid:
+              if creds and creds.expired and creds.refresh_token:
+                  creds.refresh(Request())
+              else:
+                  flow = InstalledAppFlow.from_client_secrets_file(
+                      'credentials.json', SCOPES)
+                  creds = flow.run_local_server(port=0)
+              # Save the credentials for the next run
+              with open('token.json', 'w') as token:
+                  token.write(creds.to_json())
           service = build('calendar', 'v3', credentials=creds)
           # 메세지 입력받음
           input_data = (msg.split(' '))
@@ -314,11 +298,7 @@ class Google_calendar(commands.Cog):
                               end_date = end_date_str[14:24]
                               end_time = end_date_str[25:33]
                       # 이벤트 시작 날짜, 시작 시간, 종료 날짜, 종료 시간, 이벤트명, 이벤트 아이디를 변수에 담아 리스트에 저장
-                      if 'summary' in event:
-                          dates = start_date, start_time, end_date, end_time, event['summary']
-                      else:
-                          event.setdefault('summary', 'No Title')
-                          dates = start_date, start_time, end_date, end_time, event['summary']
+                      dates = start_date, start_time, end_date, end_time, event['summary']
                       event_list.append(dates)
               # 이벤트가 없을 경우 메시지 출력
               if len(event_list) == 0:
@@ -393,11 +373,7 @@ class Google_calendar(commands.Cog):
                               end_date = end_date_str[14:24]
                               end_time = end_date_str[25:33]
                       # 이벤트 시작 날짜, 시작 시간, 종료 날짜, 종료 시간, 이벤트명, 이벤트 아이디를 변수에 담아 리스트에 저장
-                      if 'summary' in event:
-                          dates = start_date, start_time, end_date, end_time, event['summary']
-                      else:
-                          event.setdefault('summary', 'No Title')
-                          dates = start_date, start_time, end_date, end_time, event['summary']
+                      dates = start_date, start_time, end_date, end_time, event['summary']
                       event_list.append(dates)
               # 이벤트가 없을 경우 메시지 출력
               if len(event_list) == 0:
@@ -471,11 +447,7 @@ class Google_calendar(commands.Cog):
                               end_date = end_date_str[14:24]
                               end_time = end_date_str[25:33]
                       # 이벤트 시작 날짜, 시작 시간, 종료 날짜, 종료 시간, 이벤트명, 이벤트 아이디를 변수에 담아 리스트에 저장
-                      if 'summary' in event:
-                          dates = start_date, start_time, end_date, end_time, event['summary']
-                      else:
-                          event.setdefault('summary', 'No Title')
-                          dates = start_date, start_time, end_date, end_time, event['summary']
+                      dates = start_date, start_time, end_date, end_time, event['summary']
                       event_list.append(dates)
               # 이벤트가 없을 경우 메시지 출력
               if len(event_list) == 0:
@@ -549,12 +521,8 @@ class Google_calendar(commands.Cog):
                               end_date = end_date_str[14:24]
                               end_time = end_date_str[25:33]
                       # 이벤트 시작 날짜, 시작 시간, 종료 날짜, 종료 시간, 이벤트명, 이벤트 아이디를 변수에 담아 리스트에 저장
-                      if 'summary' in event:
-                          dates = start_date, start_time, end_date, end_time, event['summary']
-                      else:
-                          event.setdefault('summary', 'No Title')
-                          dates = start_date, start_time, end_date, end_time, event['summary']
-                      event_list.append(dates)
+                      dates = start_date, start_time, end_date, end_time, event['summary']
+                      event_list.append(dates)        
               # 이벤트가 없을 경우 메시지 출력
               if len(event_list) == 0:
                   # 임베드 생성
@@ -577,32 +545,20 @@ class Google_calendar(commands.Cog):
       @commands.command()
       async def update(self, ctx, *, msg):
           # 구글 API 인증 코드
-          # 서버안의 유저 id
-        #   user_id = ctx.author.discriminator
-          user_id = '7777'
-          # 데이터베이스 연결
-          db_connect = pymysql.connect(host=f'{db_host}', port=3306, user='admin', password=f'{db_key}', db='merlin', charset='utf8')
-          cur = db_connect.cursor()
-          # 쿼리문 작성(디스코드 유저 id로 유저 존재 여부 확인)
-          cur.execute(f"SELECT EXISTS (SELECT * from merlin where user_id={user_id} limit 1) as success")
-          user_result = cur.fetchall()
-          # 유저가 데이터베이스에 존재 할 경우 토큰을 불러와서 사용
-          if user_result[0][0] == 1:
-              db_connect = pymysql.connect(host=f'{db_host}', port=3306, user='admin', password=f'{db_key}', db='merlin', charset='utf8')
-              cur = db_connect.cursor()
-              cur.execute(f"SELECT token from merlin WHERE user_id={user_id}")
-              user_token = cur.fetchall()
-              user_token = json.loads(user_token[0][0])
-              creds = Credentials.from_authorized_user_info(user_token, SCOPES)
-          # 유저가 존재하지 않을 경우 데이터베이스에 토큰 생성
-          else:
-              flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
-              creds = flow.run_local_server(port=0)
-              token_json = json.dumps(creds.to_json())
-              db_connect = pymysql.connect(host=f'{db_host}', port=3306, user='admin', password=f'{db_key}', db='merlin', charset='utf8')
-              cur = db_connect.cursor()
-              cur.execute(f"INSERT INTO merlin (user_id, token) VALUES ({user_id}, {token_json})")
-              db_connect.commit()
+          creds = None
+          if os.path.exists('token.json'):
+              creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+          # If there are no (valid) credentials available, let the user log in.
+          if not creds or not creds.valid:
+              if creds and creds.expired and creds.refresh_token:
+                  creds.refresh(Request())
+              else:
+                  flow = InstalledAppFlow.from_client_secrets_file(
+                      'credentials.json', SCOPES)
+                  creds = flow.run_local_server(port=0)
+              # Save the credentials for the next run
+              with open('token.json', 'w') as token:
+                  token.write(creds.to_json())
           service = build('calendar', 'v3', credentials=creds)
           # 메세지 입력받음
           input_data = (msg.split(' '))
@@ -667,11 +623,7 @@ class Google_calendar(commands.Cog):
                           end_date = end_date_str[14:24]
                           end_time = end_date_str[25:33]
                   # 이벤트 시작 날짜, 시작 시간, 종료 날짜, 종료 시간, 이벤트명, 이벤트 아이디를 변수에 담아 리스트에 저장
-                  if 'summary' in event:
-                      dates = start_date, start_time, end_date, end_time, event['summary']
-                  else:
-                      event.setdefault('summary', 'No Title')
-                      dates = start_date, start_time, end_date, end_time, event['summary']
+                  dates = start_date, start_time, end_date, end_time, event['summary'], event['id']
                   event_list.append(dates)
           # 임베드에 표시 할 인덱스 번호, 업데이트 전 이벤트명, 업데이트 후 이벤트명, 이벤트 시간을 선언(코드 추가를 통해 업데이트 가능한 내용을 추가할 경우 해당 내용도 임베드에 표시)
           embed_start_date = event_list[num-1][0]
@@ -705,32 +657,20 @@ class Google_calendar(commands.Cog):
       @commands.command()
       async def delete(self, ctx, msg1, msg2):
           # 구글 API 인증 코드
-          # 서버안의 유저 id
-        #   user_id = ctx.author.discriminator
-          user_id = '7777'
-          # 데이터베이스 연결
-          db_connect = pymysql.connect(host=f'{db_host}', port=3306, user='admin', password=f'{db_key}', db='merlin', charset='utf8')
-          cur = db_connect.cursor()
-          # 쿼리문 작성(디스코드 유저 id로 유저 존재 여부 확인)
-          cur.execute(f"SELECT EXISTS (SELECT * from merlin where user_id={user_id} limit 1) as success")
-          user_result = cur.fetchall()
-          # 유저가 데이터베이스에 존재 할 경우 토큰을 불러와서 사용
-          if user_result[0][0] == 1:
-              db_connect = pymysql.connect(host=f'{db_host}', port=3306, user='admin', password=f'{db_key}', db='merlin', charset='utf8')
-              cur = db_connect.cursor()
-              cur.execute(f"SELECT token from merlin WHERE user_id={user_id}")
-              user_token = cur.fetchall()
-              user_token = json.loads(user_token[0][0])
-              creds = Credentials.from_authorized_user_info(user_token, SCOPES)
-          # 유저가 존재하지 않을 경우 데이터베이스에 토큰 생성
-          else:
-              flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
-              creds = flow.run_local_server(port=0)
-              token_json = json.dumps(creds.to_json())
-              db_connect = pymysql.connect(host=f'{db_host}', port=3306, user='admin', password=f'{db_key}', db='merlin', charset='utf8')
-              cur = db_connect.cursor()
-              cur.execute(f"INSERT INTO merlin (user_id, token) VALUES ({user_id}, {token_json})")
-              db_connect.commit()
+          creds = None
+          if os.path.exists('token.json'):
+              creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+          # If there are no (valid) credentials available, let the user log in.
+          if not creds or not creds.valid:
+              if creds and creds.expired and creds.refresh_token:
+                  creds.refresh(Request())
+              else:
+                  flow = InstalledAppFlow.from_client_secrets_file(
+                      'credentials.json', SCOPES)
+                  creds = flow.run_local_server(port=0)
+              # Save the credentials for the next run
+              with open('token.json', 'w') as token:
+                  token.write(creds.to_json())
           service = build('calendar', 'v3', credentials=creds)
           # 삭제 할 이벤트가 포함 된 날짜(년/월/일) 입력
           start_year, start_month, start_date = map(int, msg1.split('-'))
@@ -787,11 +727,7 @@ class Google_calendar(commands.Cog):
                           end_date = end_date_str[14:24]
                           end_time = end_date_str[25:33]
                   # 이벤트 시작 날짜, 시작 시간, 종료 날짜, 종료 시간, 이벤트명, 이벤트 아이디를 변수에 담아 리스트에 저장
-                  if 'summary' in event:
-                      dates = start_date, start_time, end_date, end_time, event['summary']
-                  else:
-                      event.setdefault('summary', 'No Title')
-                      dates = start_date, start_time, end_date, end_time, event['summary']
+                  dates = start_date, start_time, end_date, end_time, event['summary'], event['id']
                   event_list.append(dates)
           # 임베드에 표시 할 삭제 된 이벤트의 인덱스 번호와 이벤트명, 이벤트 시간
           event_title = f"{num}. {event_list[num-1][4]}"
