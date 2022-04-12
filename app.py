@@ -54,12 +54,6 @@ for i in range(len(cogs)):
 """
 @client.event
 async def on_ready():
-    print("========================================")
-    print(f'Project : Merlin bot Project Alpha 1.0.1 Version')
-    print(f'Bot status : Ready')
-    print(f'Bot Joined Server : {client.user.name} is Online')
-    print(f'connection was succesful . . . . . .')
-    print("========================================")
     # 봇을 온라인상태로 바꿔준다
     await client.change_presence(status=discord.Status.online, activity=None)
 #endregion
@@ -610,32 +604,6 @@ async def download(ctx):
     
     await ctx.send(embed=embed)
     
-
-# #region 7) 출퇴근 및 출근 현황 커맨드 section. - 메인 백 윤정기.
-# """
-# 출근현황 커맨드.
-# """
-# @client.command()
-# async def 출근현황(ctx):
-#     company_name = f'{ctx.guild}'
-#     file_path = f'./commute_record_paper_folder/{company_name}-{filename}.xlsx'
-#     # wt_employee_name / 출근 버튼 클릭한 직원이름 출력.
-
-#     # 출근_기록부가 있을 때
-#     if os.path.exists(file_path):
-#         # 엑셀 파일을 읽어온다
-#         excel = openpyxl.load_workbook(file_path)
-#         excel_ws = excel['출근_기록부']
-#         # 엑셀 파일 안의 맴버 정보를 모은다
-#         on_list = []
-#         for row in excel_ws.iter_rows(min_row=2, values_only=True):
-#             # 퇴근하지 않은 출근 상태의 맴버 정보를 모은다
-#             if row[2].value == '출근' and row[4].value == None:
-#                 on_list.append(row[0])
-        
-#     else:
-#         await ctx.send('출근 인원이 없습니다.')
-# #endregion
       
 """
 로컬 클라이언트 디스코드 실행부.
