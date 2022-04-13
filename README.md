@@ -1,4 +1,4 @@
-# 디스코드 ERP 멀린 봇 AI-WEB development
+# 디스코드 ERP 멀린 봇 AI-WEB development 앱 서버 
 
 ## 이 팀 프로젝트는 1조 성배를 찾아나서는 아서왕의 기사단들에게서 생성 되었습니다.
 
