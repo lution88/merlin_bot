@@ -90,4 +90,5 @@ Electron 베이스로 제작이되었으며 디스코드보다 먼저 제작된 
 
 
 ### 파이널 프로젝트 블로그 회고 -
+https://hopao.tistory.com/45?category=1019695
 
