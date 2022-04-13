@@ -1,4 +1,4 @@
-# <img width="6%" src=https://user-images.githubusercontent.com/91515828/163103300-7e36be9b-4825-45a4-a3cf-b58803cd0261.png> &nbsp; 디스코드 ERP 멀린 봇 AI-WEB development 앱 서버
+# <img width="5%" src=https://user-images.githubusercontent.com/91515828/163103300-7e36be9b-4825-45a4-a3cf-b58803cd0261.png> &nbsp;디스코드 ERP 멀린 봇 AI-WEB development 앱 서버
 ```powershell
 저희 프로젝트는 웹서버와 앱서버 총 2개의 서버를 제작 하였습니다.
 ```
