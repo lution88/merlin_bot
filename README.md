@@ -12,12 +12,14 @@ For a detailed description of the bot, see this [Video](https://youtu.be/vVbSRfm
 
 
 
-## Developer
+## 1조 멀린 개발 인원 (5명)
 
 * Team Leader :
-    - [조시욱](https://github.com/github01main)  
+    - [조시욱](https://github.com/github01main)
+    개발 업무 포지션 : 멀린앱 플레이어, 엑셀, 캘린더 초기 코드 작성 및 업무 전반 프로그레스 마일스톤 기획 및 보안 관련 이슈, 팀원들 교육 서포팅 소스코드 진행.
 * Team Members :
     - [윤정기](https://github.com/lution88)
+    
     - [이성호](https://github.com/Hosio123)
     - [정심일](https://github.com/joneheart)
     - [김 &nbsp;&nbsp; 호](https://github.com/hopaom)
