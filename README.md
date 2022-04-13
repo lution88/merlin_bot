@@ -29,7 +29,7 @@
     - 김 &nbsp;&nbsp; 호 깃-허브 [Click](https://github.com/hopaom)
     - UI개선을 위해 `discord-buttons-plugin`활용. Time Recorder 기능과 그에 필요한 데이터를 `openpyxl` 을 활용하여 Excel형태로 저장 후 aws S3 연동 및 배포, Heroku를 통한 앱서버 배포, jwt를 DB에 저장하기 위해 MySQL aws RDS 에 연결.
     - 정심일 깃-허브 [Click](https://github.com/joneheart)
-    - 개발 업무 포지션 : 멀린봇 커뮤니티 및 후원 웹서버 제작(Django) 및 배포(AWS Elastic Elastic Beanstalk)
+    - 개발 업무 포지션 : 멀린봇 커뮤니티 및 후원 웹서버 제작(Django, HTML, CSS, Javascript) 및 배포(AWS Elastic Elastic Beanstalk)
 
 ## 1조 멀린 기획
 
