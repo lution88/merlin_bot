@@ -27,7 +27,7 @@
     - 개발 업무 포지션 : GCP(구글클라우드플랫폼)을 이용한 캘린더 공유 및 생성 삭제 리스트 등 `calendar API`, `discord API` 크로스플랫폼 데이터 전송 연동 및 배포 버전 패키징.
     - ex) `JWT(jason web token)`발행 후 멀린 봇이 업로드 되어있는 중간경로 헤로쿠 서버에 쿼리 헤로쿠 서버에서 브릿지를 통하여 GCP에 캘린더 데이터 쿼리 후 디스코드 채널로 재귀.
     - 김 &nbsp;&nbsp; 호 깃-허브 [Click](https://github.com/hopaom)
-    - UI개선을 위해 `discord-buttons-plugin`활용. Time Recorder 기능과 그에 필요한 데이터를 `openpyxl` 을 활용하여 Excel형태로 저장 후 aws S3 연동 및 배포, Heroku를 통한 앱서버 배포, jwt를 DB에 저장하기 위해 MySQL aws RDS 에 연결.
+    - UI개선을 위해 `discord-buttons-plugin`활용. Time Recorder 기능과 그에 필요한 데이터를 `openpyxl` 을 활용하여 Excel형태로 저장 후 `aws S3` 연동 및 배포, Heroku를 통한 앱서버 배포, `JWT`를 DB에 저장하기 위해 `MySQL aws RDS` 에 연결.
     - 정심일 깃-허브 [Click](https://github.com/joneheart)
     - 개발 업무 포지션 : 멀린봇 커뮤니티 및 후원 웹서버 제작(Django, HTML, CSS, Javascript) 및 배포(AWS Elastic Elastic Beanstalk)
 
@@ -90,6 +90,6 @@ Electron 베이스로 제작이되었으며 디스코드보다 먼저 제작된 
 
 
 ### 파이널 프로젝트 블로그 회고 -
-[김 &nbsp;&nbsp; 호](https://hopao.tistory.com/45?category=1019695)
+[김 호](https://hopao.tistory.com/45?category=1019695)
 
 <img width="80%" src=https://user-images.githubusercontent.com/91515828/163102242-8ed681f8-f9ea-4267-9f58-bbb23b72be7f.jpg>
