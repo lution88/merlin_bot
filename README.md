@@ -31,6 +31,7 @@
     - ex)
     - 정심일 깃-허브 [Click](https://github.com/joneheart)
     - 개발 업무 포지션 : 멀린봇 커뮤니티 및 후원 웹서버 제작(Django) 및 배포(AWS Elastic Elastic Beanstalk)
+    - ex)
 
 ## 1조 멀린 기획
 
