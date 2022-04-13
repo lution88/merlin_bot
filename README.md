@@ -1,4 +1,4 @@
-# 디스코드 ERP 멀린 봇 AI-WEB development 앱 서버
+# <img width="6%" src=https://user-images.githubusercontent.com/91515828/163103300-7e36be9b-4825-45a4-a3cf-b58803cd0261.png> &nbsp; 디스코드 ERP 멀린 봇 AI-WEB development 앱 서버
 ```powershell
 저희 프로젝트는 웹서버와 앱서버 총 2개의 서버를 제작 하였습니다.
 ```
@@ -12,7 +12,7 @@
 
 * 멀린 봇 파이널 프로젝트 발표 영상 [유튜브 영상 링크!](https://youtu.be/vVbSRfmq_n8)
 
-<img width="7%" src=https://user-images.githubusercontent.com/91515828/163103300-7e36be9b-4825-45a4-a3cf-b58803cd0261.png>
+
 
 ## 1조 멀린 개발 인원 (5명)
 
