@@ -1,4 +1,6 @@
-# Discord Bot Merlin
+# Discord ERP(Enterprise Resource Planning) Merlin Bot Project
+
+## this Project belong to the arthur king knight's holygrail of the fellowship.
 
 Descriptions of the features of this bot are provided on the [Merlin Webserver](https://merlindc.click/)
 
