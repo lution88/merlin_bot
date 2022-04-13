@@ -91,8 +91,8 @@ Electron 베이스로 제작이되었으며 디스코드보다 먼저 제작된 
 
 ### 파이널 프로젝트 블로그 회고 -
 [윤정기](https://dbswjdrl88.tistory.com/89)
-[이성호](https://southpaw.tistory.com/40)
-[김 &nbsp;&nbsp; 호](https://hopao.tistory.com/45?category=1019695)
+&nbsp; [이성호](https://southpaw.tistory.com/40)
+&nbsp; [김 호](https://hopao.tistory.com/45?category=1019695)
 
 ### 테크트리 -
 <img width="70%" src=https://user-images.githubusercontent.com/91515828/163102242-8ed681f8-f9ea-4267-9f58-bbb23b72be7f.jpg>
