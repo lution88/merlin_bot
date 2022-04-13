@@ -90,6 +90,6 @@ Electron 베이스로 제작이되었으며 디스코드보다 먼저 제작된 
 
 
 ### 파이널 프로젝트 블로그 회고 -
-https://hopao.tistory.com/45?category=1019695
+[김 &nbsp;&nbsp; 호](https://hopao.tistory.com/45?category=1019695)
 
 <img width="80%" src=https://user-images.githubusercontent.com/91515828/163102242-8ed681f8-f9ea-4267-9f58-bbb23b72be7f.jpg>
