@@ -12,7 +12,7 @@
 
 * 멀린 봇 파이널 프로젝트 발표 영상 [유튜브 영상 링크!](https://youtu.be/vVbSRfmq_n8)
 
-
+<img width="7%" src=https://user-images.githubusercontent.com/91515828/163103300-7e36be9b-4825-45a4-a3cf-b58803cd0261.png>
 
 ## 1조 멀린 개발 인원 (5명)
 
@@ -92,4 +92,5 @@ Electron 베이스로 제작이되었으며 디스코드보다 먼저 제작된 
 ### 파이널 프로젝트 블로그 회고 -
 [김 호](https://hopao.tistory.com/45?category=1019695)
 
+### 테크트리 -
 <img width="70%" src=https://user-images.githubusercontent.com/91515828/163102242-8ed681f8-f9ea-4267-9f58-bbb23b72be7f.jpg>
