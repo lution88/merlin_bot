@@ -1,18 +1,15 @@
 '''
 *******************************************************************************************************************
 
-날일 : 2022-03-11 金曜日 |  수정일     : 2022-03-24 木曜日
+날일 : 2022-03-11 金曜日 |  수정일     : 2022-04-13 水曜日
 저자 : 이성호            |  수정자     : 조시욱
 제목 : Google_calendar
-내용 : 멀린 봇 구글 캘린더 입니다. 
-
-discord 패키지 버전 : discord-1.7.3
-youtube 패키지 버전 : youtube-dl 2021.12.17
+내용 : 멀린 봇 구글 캘린더 RDS 비설정 파일 입니다. 
 
 *******************************************************************************************************************
 '''
 
-#region 1) 멀린 봇 캘린더 section.  2022-03-17 마지막 수정자 조시욱.
+#region 1) 멀린 봇 캘린더 section.
 
 from __future__ import print_function
 # 구글 API 관련 패키지
@@ -747,9 +744,5 @@ class Google_calendar(commands.Cog):
           # 임베드 전송
           await ctx.send(embed=embed)
 
-""" 2) merlin bot player setup.  
-
-1. 클라이언트에 카테고리 youtube_player를 추가한다.
-"""
 def setup(client):
       client.add_cog(Google_calendar(client))
