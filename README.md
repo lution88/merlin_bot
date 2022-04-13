@@ -2,11 +2,11 @@
 
 ## 이 팀 프로젝트는 1조 성배를 찾아나서는 아서왕의 기사단들에게서 생성 되었습니다.
 
-Descriptions of the features of this bot are provided on the [Merlin Webserver](https://merlindc.click/)
+멀린 봇 장고 웹서버로 구현한 사이트  [멀린 웹 서버 링크!](https://merlindc.click/)
 
-If you want to know more about Merlin Webserver : [Repository](https://github.com/joneheart/merlin_webserver)
+멀린봇 장고 웹서버 대외용 원격저장소 : [원격 저장소 링크!](https://github.com/joneheart/merlin_webserver)
 
-Invite Bot to my discode server : [Invite](https://discord.com/api/oauth2/authorize?client_id=950766027535421460&permissions=8&scope=applications.commands%20bot)
+멀린봇 디스코드 초대 링크 : [디스코드에 초대하기 링크!](https://discord.com/api/oauth2/authorize?client_id=950766027535421460&permissions=8&scope=applications.commands%20bot)
 
 For a detailed description of the bot, see this [Video](https://youtu.be/vVbSRfmq_n8).
 
@@ -16,10 +16,11 @@ For a detailed description of the bot, see this [Video](https://youtu.be/vVbSRfm
 
 * Team Leader :
     - [조시욱](https://github.com/github01main)
-    - 개발 업무 포지션 : 멀린앱 플레이어, 엑셀, 캘린더 초기 코드 작성 및 업무 전반 프로그레스 마일스톤 기획 및 보안 관련 이슈, 팀원들 교육 서포팅 소스코드 진행.
+    - 개발 업무 포지션 : 멀린앱 플레이어, 엑셀, 캘린더 초기 코드 작성 및 업무 전반 프로그레스 마일스톤 기획 및 보안 관련 이슈, 팀원들 교육.
+    - ex) 소스코드 예제 작성 후 데모 버전 실행, 업무 효율성을 위해 장고 프로젝트용 자동화 파워쉘 작성 후 배포. 
 * Team Members :
     - [윤정기](https://github.com/lution88)
-    
+    - 
     - [이성호](https://github.com/Hosio123)
     - [정심일](https://github.com/joneheart)
     - [김 &nbsp;&nbsp; 호](https://github.com/hopaom)
