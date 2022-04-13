@@ -1,13 +1,10 @@
 """
 *******************************************************************************************************************
 
-날일 : 2022-03-11 金曜日 |  수정일     : 2022-12-17 木曜日
-저자 : 윤정기            |  수정자     : 조시욱
+날일 : 2022-03-11 金曜日 |  수정일     : 2022-04-13 水曜日
+저자 : 윤정기            |  수정자     : 윤정기
 제목 : Merlin_Player
 내용 : 멀린 봇 플레이어 입니다. 
-
-discord 패키지 버전 : discord-1.7.3
-youtube 패키지 버전 : youtube-dl 2021.12.17
 
 *******************************************************************************************************************
 """
@@ -28,17 +25,6 @@ from discord_buttons_plugin import *
 client = commands.Bot(command_prefix ="!")
 buttons = ButtonsClient(client)
 
-""" 1) youtube_player category class.   
-
-1. join() 
-    (1)   보이스 채널에 접속해 있지만으면 보이스 채널에 아무도 없다고 출력.
-    (2)   보이스 채널에 접속해 있지만으면 
-    (3)   보이스 채널에 접속해 있지만으면
-2. disconnect()
-3. play()
-4. pause()
-
-"""
 user = []  # 유저가 입력한 노래 정보
 musictitle = []  # 가공된 정보의 노래 제목
 song_queue = []  # 가공된 정보의 노래 링크
@@ -364,13 +350,6 @@ class youtube_player(commands.Cog):
             text="Information requested by : {0}".format("Merlin bot dev-team")
         )
         await ctx.send(embed=music_help_Embed)
-
-
-""" 2) merlin bot player setup.  
-
-1. 클라이언트에 카테고리 youtube_player를 추가한다.
-"""
-
 
 def setup(client):
     client.add_cog(youtube_player(client))
