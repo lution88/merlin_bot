@@ -8,7 +8,7 @@
 
 * 멀린봇 디스코드 초대 링크 : [디스코드에 초대하기 링크!](https://discord.com/api/oauth2/authorize?client_id=950766027535421460&permissions=8&scope=applications.commands%20bot)
 
-For a detailed description of the bot, see this [Video](https://youtu.be/vVbSRfmq_n8).
+* 멀린 봇 파이널 프로젝트 발표 영상 [유튜브 영상 링크!](https://youtu.be/vVbSRfmq_n8).
 
 
 
