@@ -21,11 +21,15 @@ For a detailed description of the bot, see this [Video](https://youtu.be/vVbSRfm
 * Team Members :
     - 윤정기 깃-허브 [Click](https://github.com/lution88)
     - 개발 업무 포지션 : 멀린앱 플레이어 개발 및 테스트 디버깅 후 디스코드 API 로우 코드 셀레니움 로우 코드 적용, 멀린 봇 배포 버전 패키징.
-    - [이성호 깃-허브 링크!](https://github.com/Hosio123)
+    - 이성호 깃-허브 [Click](https://github.com/Hosio123)
     - 개발 업무 포지션 : GCP(구글클라우드플랫폼)을 이용한 캘린더 공유 및 생성 삭제 리스트 등 calendar API, discord API 크로스플랫폼 데이터 전송 연동 및 배포 버전 패키징.
     - ex) JWT(jason web token)발행 후 멀린 봇이 업로드 되어있는 중간경로 헤로쿠 서버에 쿼리 헤로쿠 서버에서 브릿지를 통하여 GCP에 캘린더 데이터 쿼리 후 디스코드 채널로 재귀.
-    - [정심일 깃-허브 링크!](https://github.com/joneheart)
+    - 정심일 깃-허브 [Click](https://github.com/joneheart)
+    -
+    - ex)
     - [김 &nbsp;&nbsp; 호](https://github.com/hopaom)
+    -
+    - ex)
 
 
 ### 개발의도
