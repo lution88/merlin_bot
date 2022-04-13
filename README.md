@@ -1,6 +1,6 @@
-# Discord ERP(Enterprise Resource Planning) Merlin Bot Project
+# Discord ERP(Enterprise Resource Planning) Merlin Bot AI-WEB dev last team Project.
 
-## this Project belong to the arthur king knight's holygrail of the fellowship.
+## this Project maded by arthur king knight's holygrail of the fellowship team.
 
 Descriptions of the features of this bot are provided on the [Merlin Webserver](https://merlindc.click/)
 
