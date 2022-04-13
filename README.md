@@ -27,7 +27,7 @@ For a detailed description of the bot, see this [Video](https://youtu.be/vVbSRfm
     - 정심일 깃-허브 [Click](https://github.com/joneheart)
     -
     - ex)
-    - 김 &nbsp;&nbsp; 깃-허브  호[Click](https://github.com/hopaom)
+    - 김 &nbsp;&nbsp; 호 깃-허브 [Click](https://github.com/hopaom)
     -
     - ex)
 
