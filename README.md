@@ -26,10 +26,10 @@
     - 이성호 깃-허브 [Click](https://github.com/Hosio123)
     - 개발 업무 포지션 : GCP(구글클라우드플랫폼)을 이용한 캘린더 공유 및 생성 삭제 리스트 등 `calendar API`, `discord API` 크로스플랫폼 데이터 전송 연동 및 배포 버전 패키징.
     - ex) `JWT(jason web token)`발행 후 멀린 봇이 업로드 되어있는 중간경로 헤로쿠 서버에 쿼리 헤로쿠 서버에서 브릿지를 통하여 GCP에 캘린더 데이터 쿼리 후 디스코드 채널로 재귀.
-    - 정심일 깃-허브 [Click](https://github.com/joneheart)
-    -
-    - ex)
     - 김 &nbsp;&nbsp; 호 깃-허브 [Click](https://github.com/hopaom)
+    - Time Recorder 기능과 그에 필요한 데이터를 openpyxl 을 활용하여 Excel형태로 저장 후 aws S3 연동 및 배포, Heroku를 이용한 앱서버 배포.
+    - ex)
+    - 정심일 깃-허브 [Click](https://github.com/joneheart)
     -
     - ex)
 
