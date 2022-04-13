@@ -1,4 +1,5 @@
 #region 1) 프로젝트 모듈 section.
+
 """
 디스코드 모듈.
 """
@@ -17,9 +18,9 @@ import datetime as dt
 import xlsxwriter
 import openpyxl
 import boto3
-#endregion
 from pytz import timezone
 
+#endregion
 
 
 """
@@ -27,7 +28,8 @@ from pytz import timezone
 """
 client = commands.Bot(command_prefix ="!", intents=discord.Intents.all())
 buttons = ButtonsClient(client)
-#endregion
+
+#region 2) Cog 카테고리 section.
 
 """ 
 멀린 플레이어.
@@ -48,7 +50,7 @@ for i in range(len(cogs)):
       cogs[i].setup(client)
 #endregion
 
-#region 4) 멀린 봇 기동 이벤트 section. - 메인 백 윤정기.
+#region 3) 멀린 봇 기동 이벤트 section.
 """
 로컬 클라이언트 디스코드 봇 사용 준비 함수.
 """
@@ -56,7 +58,6 @@ for i in range(len(cogs)):
 async def on_ready():
     # 봇을 온라인상태로 바꿔준다
     await client.change_presence(status=discord.Status.online, activity=None)
-#endregion
 aws_id = os.getenv("AWS_ACCESS_ID")
 aws_key = os.getenv("AWS_ACCESS_KEY")
 # Set AWS credentials 
@@ -67,7 +68,7 @@ s3r = boto3.resource('s3', aws_access_key_id=f'{aws_id}',
     aws_secret_access_key=f'{aws_key}')
 #endregion
 
-#region 5) 버튼 이벤트 Section. - 1조 팀장 조시욱.
+#region 4) 버튼 이벤트 Section.
 """
 버튼 클릭 이벤트 == 엑셀 파일 시트 이름 부여
 """
@@ -346,13 +347,13 @@ async def out_on_business(ctx):
         await ctx.reply('출근 버튼을 새로 불러와 주세요.')
 #endregion
 
-#region 6) 멀린 봇 서버에 초대 링크 임베디드 생성 커맨드 section. - 1조 팀장 조시욱.
+#region 5) 멀린 봇 서버에 초대 링크 임베디드 생성 커맨드 section. - 1조 팀장 조시욱.
 """
 초대 링크 임베디드 생성 커맨드.
 """
 @client.command()
 async def counter(ctx):
-    #region 1) 엠베드  initializer section.
+    #region 엠베드 initializer section.
     
     embed = discord.Embed(title=f"Time Recorder", color = 0x2ba191,
                           description=f"{file_date} 일자 출퇴근 기록부ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ")
@@ -556,13 +557,13 @@ async def counter(ctx):
             s3.upload_file(f'{file_path}', 'merlin-bucket', f'commute_record_paper_folder/{company_name}-{filename}.xlsx')
 #endregion
 
-#region 6) 멀린 봇 서버에 초대 링크 임베디드 생성 커맨드 section. - 1조 팀장 조시욱.
+#region 6) 멀린 봇 서버에 초대 링크 임베디드 생성 커맨드 section.
 """
 초대 링크 임베디드 생성 커맨드.
 """
 @client.command()
 async def invite(ctx):  
-    #region 1) 엠베드  initializer section.
+    #region 엠베드 initializer section.
     
     embed = discord.Embed(title=f" Invite Merlin Bot to your server !", color = 0x2ba191,
                           description=f"Merlin Bot is easy to use and included powerful commands ERP Program.\
