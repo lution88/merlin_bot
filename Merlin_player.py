@@ -8,7 +8,7 @@
 
 *******************************************************************************************************************
 """
-# region 1) 멀린 봇 플레이어 section.  2022-03-17 마지막 수정자 조시욱.
+# region 1) 멀린 봇 플레이어 section.  
 import os
 import time
 import discord
@@ -39,10 +39,7 @@ class youtube_player(commands.Cog):
         global music
         YDL_OPTIONS = {'format': 'bestaudio', 'noplaylist':'True'}
         FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
-        # options = webdriver.ChromeOptions()
-        # options.add_argument("headless")
-        # # chromedriver_dir = "C:/Users/lutio/Downloads/chromedriver_win32/chromedriver.exe"
-        # driver = webdriver.Chrome(chromedriver_dir, options = options)
+
         # Heroku 용 ChromeDriver 세팅
         chrome_options = webdriver.ChromeOptions()
         chrome_options.add_argument("--headless")
@@ -134,9 +131,6 @@ class youtube_player(commands.Cog):
         if ctx.voice_client.is_playing(): # 봇이 노래를 재생중이라면
             ctx.voice_client.stop() # 노래를 중단하고 셀레니움을 진행한다.
         
-        # 셀레니움을 위한 크롬드라이버 사용 - 옵션
-        # options = webdriver.ChromeOptions() # 크롬웹드라이버의 옵션을 option 이라는 변수에 담는다.
-        # options.add_argument("headless")    # option : headless 크롬웹드라이버가 창으로 보이지 않는다.
         # Heroku 용 ChromeDriver 세팅
         chrome_options = webdriver.ChromeOptions()
         chrome_options.add_argument("--headless")
@@ -152,12 +146,9 @@ class youtube_player(commands.Cog):
         YDL_OPTIONS = {'format': 'bestaudio'}  # 노래 재생을 위한 YDL 의 옵션 포맷 : bestaudio
         
         # 크롬웹드라이버 세팅
-        # chromedriver_dir = "C:/Users/lutio/Downloads/chromedriver_win32/chromedriver.exe"   # 크롬웹드라이버가 설치된 위치
-        # driver = webdriver.Chrome(chromedriver_dir, options=options) # 크롬 웹드라이버 사용을 위한 (위치, 옵션) : 옵션은 위에서 설정했음.
         chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
         driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
         driver.get("https://www.youtube.com/results?search_query="+msg+"+lyrics")   # 웹드라이버로 가져올 url 
-        # source = driver.page_source.encode('utf-8').strip()   # 인코딩한 source 사용시 
         
         source = driver.page_source # 드라이버에서 가져온 html 중에서 page_source 만 가져온다.
         bs = BeautifulSoup(source, 'lxml')  # 가져온 source 를 lxml 로 파싱한다.
@@ -236,78 +227,8 @@ class youtube_player(commands.Cog):
             
         else:
             await ctx.send("you're not listening to music now")
-    
-    # # 목록
-    # @commands.command(name='show.playlist')
-    # async def play_list(self, ctx):
-    #     if len(musictitle) == 0:
-    #         await ctx.send("등록된 노래가 없습니다.")
-    #     else:
-    #         global Text
-    #         Text = ""
-    #         for i in range(len(musictitle)):
-    #             Text = Text + "\n" + str(i + 1) + ". " + str(musictitle[i])
-    #         await ctx.send(embed = discord.Embed(title="노래목록", description = Text.strip(), color = 0x00ff00))
-    
-    # # 대기열 추가
-    # @commands.command(name='add.playlist')
-    # async def music_list(self, ctx, *, msg):
-    #     user.append(msg)
-    #     result, URLTEST = self.title(msg)
-    #     song_queue.append(URLTEST)
-    #     await ctx.send(result + "를 재생목록에 추가했어요!")
-    
-    # # 대기열 초기화
-    # @commands.command(name='del.playlist')
-    # async def delete_list(self, ctx):
-    #     try:
-    #         ex = len(musicnow) - len(user)
-    #         del user[:]
-    #         del musictitle[:]
-    #         del song_queue[:]
-    #         while True:
-    #             try:
-    #                 del musicnow[ex]
-    #             except:
-    #                 break
-    #         await ctx.send(embed = discord.Embed(title= "목록초기화", description = """목록이 정상적으로 초기화되었습니다. 이제 노래를 등록해볼까요?""", color = 0x00ff00))
-    #     except:
-    #         await ctx.send("아직 아무노래도 등록하지 않았습니다.")
-    
-    # # 목록재생
-    # @commands.command(name="play.playlist")
-    # async def list_play(self, ctx):
-    #     # 사용자가 보이스 채널에 있는지 확인하는 구간, 없으면 You're not in a voice channel 메시지 보낸다.
-    #     if ctx.author.voice is None:
-    #         await ctx.send("You're not in a voice channel!")
-    #     # 사용자가 있는 보이스채널 = voice_channel
-    #     voice_channel = ctx.author.voice.channel
-        
-    #     if ctx.voice_client is None: # ctx.voice_client 가 None 이라면
-    #         await voice_channel.connect() # 봇을 보이스채널에 접속시킨다.
-    #         await ctx.send('마법사 멀린이 음성 채널에 접속했어요 ! 🔌💥 !') # 봇이 보이스채널에 접속되면 메세지 전송
-    #     else: # ctx.voice_client 가 None 이 아니라면
-    #         await ctx.voice_client.move_to(voice_channel)
-        
-    #     if ctx.voice_client.is_playing(): # 봇이 노래를 재생중이라면
-    #         ctx.voice_client.stop() # 노래를 중단하고 셀레니움을 진행한다.
-    
-    #     YDL_OPTIONS = {'format': 'bestaudio', 'noplaylist':'True'}
-    #     FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
-        
-    #     if len(user) == 0:
-    #         await ctx.send("아직 아무노래도 등록하지 않았어요.")
-    #     else:
-    #         if len(musicnow) - len(user) >= 1:
-    #             for i in range(len(musicnow) - len(user)):
-    #                 del musicnow[0]
-    #         if not ctx.voice_client.is_playing():
-    #             self.play(ctx)
-    #         else:
-    #             await ctx.send("노래가 이미 재생되고 있어요!")
 
-
-
+    # 멀린 플레이어 
     @commands.command(name="player.help")
     async def music_help(self, ctx):
 
